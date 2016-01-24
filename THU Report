@@ -1,0 +1,8 @@
+import pandas as pd
+
+df3 =pd.read_csv("C:/Users/erick/Desktop/SCRAP/TBR.csv",  sep=",", low_memory=False)
+df4 =pd.read_excel("C:/Users/erick/Desktop/SCRAP/THU.xlsx")
+df3a=df3[["TBR_First_CNOR_ID","TB_CNOR_Country_Code"]]
+df5 =pd.merge(df3a,df4, left_on="TBR_First_CNOR_ID", right_on="TBR_First_CNOR_ID1")
+df6 =df5[["TBR_First_CNOR_ID","TB_CNOR_Country_Code","THU_Type_without_master","TBR_Planned_Num_Of_THU"]]
+df = df6.drop_duplicates(subset=["TBR_First_CNOR_ID","TB_CNOR_Country_Code","THU_Type_without_master","TBR_Planned_Num_Of_THU"])
