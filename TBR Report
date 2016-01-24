@@ -1,0 +1,31 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Sun Jan 24 16:23:20 2016
+
+@author: erick
+"""
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+sns.set(style="white", color_codes=True)
+
+df=pd.read_csv("C:/Users/erick/Desktop/SCRAP/TBR.csv", sep=",", low_memory=False)
+df["TO-FROM"]=df.TB_CNOR_Country_Code+"-"+ df.TB_CNEE_Country_Code
+df["PL_Factor"]=np.where(((df["TB_CNOR_Country_Code"] =="SE") & (df['TB_CNEE_Country_Code']=="SE")) \
+                         |((df["TB_CNOR_Country_Code"] =="FR") & (df['TB_CNEE_Country_Code']=="FR")),250,333)
+df["PL_Factor"]=np.where(((df["TB_CNOR_Country_Code"] =="IN") & (df['TB_CNEE_Country_Code']=="IN")),300,df["PL_Factor"])
+
+df["Payload"]=df["PL_Factor"]*df["Textbox23"]
+df["Payload"].dropna()
+df["PL/THU"]=df["Payload"]/df["Textbox21"]
+df["PL/THU"].dropna()
+df.head()
+
+df2=df[["Textbox21","Textbox22","Textbox23","Payload","PL/THU"]]
+df2.columns=["THU","Weight","Volume","Payload","PL/THU"]
+df2.describe()
+
+sns.regplot("PL/THU", "Payload", data=df)
+sns.FacetGrid(df, hue="TO-FROM", size=5) \
+   .map(plt.scatter, "Payload", "PL/THU")
